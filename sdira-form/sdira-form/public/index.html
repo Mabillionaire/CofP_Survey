@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Self-Directed IRA Group — Feedback & Participation</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9f7f4; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
+  #app { width: 100%; max-width: 640px; }
+  .progress-bar { width: 100%; height: 3px; background: #e0ddd8; border-radius: 2px; margin-bottom: 2.5rem; }
+  .progress-fill { height: 100%; background: #2D6A4F; border-radius: 2px; transition: width .4s ease; }
+  .screen { display: none; flex-direction: column; gap: 1.25rem; animation: fadeUp .3s ease; }
+  .screen.active { display: flex; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: .09em; color: #2D6A4F; text-transform: uppercase; }
+  .question { font-size: 24px; font-weight: 500; color: #1a1a1a; line-height: 1.35; }
+  .sub { font-size: 14px; color: #666; line-height: 1.5; }
+  .max-note { font-size: 12px; color: #2D6A4F; font-weight: 600; }
+  .opts { display: flex; flex-direction: column; gap: 8px; }
+  .opt { display: flex; align-items: flex-start; gap: 10px; padding: 11px 14px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-size: 14px; color: #1a1a1a; line-height: 1.45; user-select: none; transition: all .15s; background: #fff; }
+  .opt:hover { border-color: #2D6A4F; background: #f2faf6; }
+  .opt.selected { border-color: #2D6A4F; background: #e8f5ee; color: #1B4332; }
+  .opt input { accent-color: #2D6A4F; margin-top: 2px; flex-shrink: 0; }
+  input[type=text], input[type=email], input[type=tel], textarea {
+    width: 100%; border: none; border-bottom: 2px solid #ccc; padding: 10px 4px;
+    font-size: 17px; font-family: inherit; color: #1a1a1a; background: transparent;
+    outline: none; transition: border-color .2s; resize: none;
+  }
+  input:focus, textarea:focus { border-color: #2D6A4F; }
+  textarea { min-height: 90px; line-height: 1.6; }
+  .hint { font-size: 12px; color: #999; margin-top: 4px; }
+  .actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: .5rem; }
+  .btn-primary { padding: 10px 22px; background: #2D6A4F; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background .15s; }
+  .btn-primary:hover { background: #1B4332; }
+  .btn-primary:disabled { background: #aaa; cursor: not-allowed; }
+  .btn-back { padding: 10px 16px; background: transparent; color: #666; border: 1px solid #ccc; border-radius: 8px; font-size: 13px; cursor: pointer; font-family: inherit; transition: all .15s; }
+  .btn-back:hover { background: #f0f0f0; }
+  .btn-skip { background: none; border: none; font-size: 13px; color: #aaa; cursor: pointer; text-decoration: underline; font-family: inherit; }
+  .counter { font-size: 12px; color: #bbb; }
+  .welcome { text-align: center; padding: 3rem 1rem; }
+  .welcome-icon { font-size: 36px; margin-bottom: 1rem; }
+  .welcome h1 { font-size: 26px; font-weight: 600; color: #1a1a1a; line-height: 1.3; margin-bottom: 1rem; }
+  .welcome p { font-size: 15px; color: #555; max-width: 420px; margin: 0 auto 2rem; line-height: 1.6; }
+  .done { text-align: center; padding: 3rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+  .done-icon { width: 56px; height: 56px; border-radius: 50%; background: #e8f5ee; display: flex; align-items: center; justify-content: center; font-size: 26px; color: #2D6A4F; }
+  .done h2 { font-size: 22px; font-weight: 600; color: #1a1a1a; }
+  .done p { font-size: 15px; color: #555; max-width: 400px; line-height: 1.6; }
+  .error-box { background: #fff0f0; border: 1px solid #f5c2c2; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #a32d2d; }
+  .fallback { width: 100%; text-align: left; }
+  .fallback pre { background: #f4f4f0; border: 1px solid #ddd; border-radius: 8px; padding: 12px; font-size: 11px; color: #333; white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow-y: auto; margin-top: .5rem; }
+  .btn-copy { margin-top: 8px; padding: 6px 14px; background: none; border: 1px solid #2D6A4F; color: #2D6A4F; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+  <!-- WELCOME -->
+  <div id="welcome" class="screen active">
+    <div class="welcome">
+      <div class="welcome-icon">✍️</div>
+      <h1>Self-Directed IRA Group<br>Feedback &amp; Participation</h1>
+      <p>This form helps us understand how you'd like to engage with our collectively managed IRA project. Takes about 10 minutes. All questions are optional.</p>
+      <button class="btn-primary" onclick="startForm()">Get started →</button>
+    </div>
+  </div>
+
+  <!-- QUESTIONS -->
+  <div id="questions-wrap"></div>
+
+  <!-- DONE -->
+  <div id="done" class="screen">
+    <div class="done">
+      <div class="done-icon">✓</div>
+      <h2 id="done-title">Response saved!</h2>
+      <p id="done-msg">We'll follow up within 2 weeks.<br><em>In solidarity, The Self-Directed IRA Study Group</em></p>
+      <div id="fallback-area" class="fallback" style="display:none">
+        <p style="font-size:13px;color:#666">Copy your answers below as a backup:</p>
+        <pre id="fallback-json"></pre>
+        <button class="btn-copy" onclick="copyFallback()">Copy to clipboard</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PROXY_URL = '/api/submit';
+
+const questions = [
+  {id:'name',      section:'Contact',               q:'What is your name?',                                              type:'text',     placeholder:'Your name (optional)'},
+  {id:'email',     section:'Contact',               q:'Your email address?',                                             type:'email',    placeholder:'email@example.com (optional)'},
+  {id:'phone',     section:'Contact',               q:'Your phone number?',                                              type:'tel',      placeholder:'Phone (optional)'},
+  {id:'engage',    section:'Participation interest',q:'How would you like to engage with this work?',                    type:'multi',    sub:'Select all that apply', opts:['Join the study group to learn together (no investment required)','Potentially invest retirement funds in a values-aligned project','Open a new retirement account to start investing','Participate in decision-making/governance (even if not investing)','Attend occasional sessions to stay informed','Share expertise or resources','Not sure yet, just exploring']},
+  {id:'invest_amt',section:'Participation interest',q:'If interested in investing, approximately how much could you theoretically invest?', type:'single', sub:'Not a commitment — just helps us plan', opts:['$5,000 – $10,000','$10,000 – $20,000','$20,000 – $50,000','$50,000+','Not planning to invest financially','Unsure / prefer not to say']},
+  {id:'retire_exp',section:'Participation interest',q:'What is your current experience with retirement accounts?',        type:'multi',    sub:'Select all that apply', opts:['I have a Traditional IRA','I have a Roth IRA','I have a 401(k) with current employer (not eligible to roll over yet)','I have a 401(k) from previous employer (could roll over)','I don\'t currently have any retirement accounts','I receive disability benefits or social security (fixed income considerations)']},
+  {id:'buyer_know',section:'Buyer connections',     q:'Do you know any groups or individuals who might want to purchase a rehabbed property by August/September 2026?', type:'single', opts:['Yes','No','Maybe — I need more information first']},
+  {id:'buyer_desc',section:'Buyer connections',     q:'Please describe who and any relevant details.',                    type:'textarea', placeholder:'Tell us about potential buyers…', showIf:{id:'buyer_know',vals:['Yes','Maybe — I need more information first']}},
+  {id:'buyer_connect',section:'Buyer connections',  q:'Do you have connections to any of these groups?',                 type:'multi',    sub:'Select all that apply', opts:['Worker cooperatives','Housing cooperatives','Community land trusts','Community organizations needing space','Values-aligned individuals/families','Cooperative developers']},
+  {id:'values_top3',section:'Values & principles',  q:'Which of our emerging investment principles resonate most strongly?', type:'multi', sub:'Choose up to 3', max:3, opts:['Returns beyond profit — measuring success by knowledge, capacity, relationships, not just money','Anti-displacement — properties serve communities, don\'t extract from them','Cooperative governance — democratic decision-making regardless of investment amount','Regenerative approach — centering Indigenous knowledge & frontline communities','Bridge finance mindset — using IRAs as tools toward transformation','Community sale priority — transferring to cooperatives/land trusts at formula prices']},
+  {id:'values_missing',section:'Values & principles',q:'What values or principles feel critical that we haven\'t named yet?', type:'textarea', placeholder:'Your thoughts…'},
+  {id:'success_def',section:'Values & principles',  q:'How would YOU define "success" for a project like this?',         type:'textarea', placeholder:'Success looks like…'},
+  {id:'return_sentence',section:'Values & principles',q:'Complete this sentence: "A return that matters to me is…"',     type:'textarea', placeholder:'A return that matters to me is…'},
+  {id:'trust_what',section:'Values & principles',   q:'What would make you trust this as a vehicle for your retirement savings?', type:'textarea', placeholder:'Your answer…'},
+  {id:'expertise',section:'Expertise & resources',  q:'Do you have experience or expertise in any of these areas?',      type:'multi',    sub:'Select all that apply', opts:['Real estate rehab/development','Worker cooperatives','Housing cooperatives','Self-directed IRAs or alternative finance','Community land trusts','Anti-displacement organizing','Property management','Tax/accounting for alternative investments','Legal expertise (ERISA, real estate, cooperatives)','Construction/contracting','Community organizing','Popular education/facilitation']},
+  {id:'knowledge_share',section:'Expertise & resources',q:'Would you be willing to do a 30-minute knowledge share with the group?', type:'single', opts:['Yes, definitely','Maybe — depends on timing','Not right now, but keep me in mind for later','No']},
+  {id:'resources',section:'Expertise & resources',  q:'Any specific resources, contacts, or knowledge you\'d like to share?', type:'textarea', placeholder:'Resources, contacts, links…'},
+  {id:'guide_valuable',section:'Study guide feedback',q:'If you\'ve reviewed any of the study guide, what was most valuable?', type:'textarea', placeholder:'What stood out…'},
+  {id:'guide_questions',section:'Study guide feedback',q:'What questions do you still have after reviewing it?',          type:'textarea', placeholder:'Your remaining questions…'},
+  {id:'guide_format',section:'Study guide feedback', q:'What format would help you engage with this information better?', type:'multi',    sub:'Select all that apply', opts:['The current written guide is great','Video walkthroughs of key concepts','Infographics and visual summaries','Case studies with specific examples','Q&A sessions','One-on-one conversations','Small group discussions']},
+  {id:'learn_style',section:'Learning preferences',  q:'What\'s your preferred learning style?',                          type:'multi',    sub:'Select all that apply', opts:['Process-learning (need time to sit with information and reflect)','Rewriting/reorganizing information myself','Visual presentations and infographics','Case studies and real examples','Testing/quizzes to check understanding','Popular education methods','Hands-on practice']},
+  {id:'open_questions',section:'Open response',      q:'What questions do you have for us?',                              type:'textarea', placeholder:'Your questions…'},
+  {id:'excites',   section:'Open response',           q:'What excites you most about this work?',                         type:'textarea', placeholder:'What excites you…'},
+  {id:'concerns',  section:'Open response',           q:'What concerns or hesitations do you have?',                      type:'textarea', placeholder:'Your concerns…'},
+  {id:'anything_else',section:'Open response',        q:'Anything else you want to share?',                               type:'textarea', placeholder:'Open space…'},
+];
+
+const fieldMap = {name:'Name',email:'Email',phone:'Phone',engage:'Engage',invest_amt:'Invest Amount',retire_exp:'Retire Experience',buyer_know:'Buyer Know',buyer_desc:'Buyer Details',buyer_connect:'Buyer Connections',values_top3:'Top Values',values_missing:'Missing Values',success_def:'Success Def',return_sentence:'Return Sentence',trust_what:'Trust What',expertise:'Expertise',knowledge_share:'Knowledge Share',resources:'Resources',guide_valuable:'Guide Valuable',guide_questions:'Guide Questions',guide_format:'Guide Format',learn_style:'Learn Style',open_questions:'Open Questions',excites:'Excites',concerns:'Concerns',anything_else:'Anything Else'};
+
+const answers = {};
+let visibleQs = [], cur = 0;
+
+function shouldShow(q) {
+  if (!q.showIf) return true;
+  const dep = answers[q.showIf.id];
+  return dep && q.showIf.vals.includes(dep);
+}
+function buildVisible() { visibleQs = questions.filter(shouldShow); }
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = ''; });
+  const el = document.getElementById(id);
+  el.style.display = 'flex';
+  el.classList.add('active');
+}
+
+function startForm() {
+  showScreen('questions-wrap');
+  buildVisible();
+  renderQ(0);
+}
+
+function renderQ(idx) {
+  cur = idx;
+  buildVisible();
+  const total = visibleQs.length;
+  document.getElementById('progress').style.width = ((idx / total) * 100) + '%';
+  const q = visibleQs[idx];
+  const wrap = document.getElementById('questions-wrap');
+  wrap.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'screen active';
+
+  let html = `<div class="section-label">${q.section}</div><div class="question">${q.q}</div>`;
+  if (q.sub) html += `<div class="sub">${q.sub}</div>`;
+  if (q.max) html += `<div class="max-note">Choose up to ${q.max}</div>`;
+
+  if (q.type === 'text' || q.type === 'email' || q.type === 'tel') {
+    html += `<input type="${q.type}" id="q-input" placeholder="${q.placeholder}" value="${answers[q.id] || ''}" autocomplete="off"><div class="hint">Press Enter to continue</div>`;
+  } else if (q.type === 'textarea') {
+    html += `<textarea id="q-input" placeholder="${q.placeholder}">${answers[q.id] || ''}</textarea><div class="hint">Shift+Enter for new line · Enter to continue</div>`;
+  } else if (q.type === 'single') {
+    html += `<div class="opts">` + q.opts.map(o => `<label class="opt${answers[q.id]===o?' selected':''}" data-val="${o}"><input type="radio" name="q-radio" value="${o}"${answers[q.id]===o?' checked':''}> ${o}</label>`).join('') + `</div>`;
+  } else if (q.type === 'multi') {
+    const saved = answers[q.id] || [];
+    html += `<div class="opts">` + q.opts.map(o => `<label class="opt${saved.includes(o)?' selected':''}" data-val="${o}"><input type="checkbox" value="${o}"${saved.includes(o)?' checked':''}> ${o}</label>`).join('') + `</div>`;
+  }
+
+  const isLast = idx === total - 1;
+  html += `<div class="actions">
+    <button class="btn-primary" onclick="nextQ()">${isLast ? 'Submit ✓' : 'OK ✓'}</button>
+    ${idx > 0 ? '<button class="btn-back" onclick="prevQ()">← Back</button>' : ''}
+    <button class="btn-skip" onclick="skipQ()">Skip</button>
+  </div>
+  <div class="counter">${idx + 1} / ${total}</div>`;
+
+  div.innerHTML = html;
+  wrap.appendChild(div);
+
+  const inp = document.getElementById('q-input');
+  if (inp) {
+    inp.focus();
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter' && (q.type !== 'textarea' || !e.shiftKey)) { e.preventDefault(); nextQ(); } });
+  }
+  if (q.type === 'single') {
+    wrap.querySelectorAll('.opt').forEach(el => el.addEventListener('click', () => {
+      answers[q.id] = el.dataset.val;
+      wrap.querySelectorAll('.opt').forEach(e => e.classList.remove('selected'));
+      el.classList.add('selected');
+      el.querySelector('input').checked = true;
+      setTimeout(() => nextQ(), 320);
+    }));
+  }
+  if (q.type === 'multi') {
+    wrap.querySelectorAll('.opt').forEach(el => el.addEventListener('click', () => {
+      const val = el.dataset.val, cb = el.querySelector('input'), cs = answers[q.id] || [];
+      if (cs.includes(val)) { answers[q.id] = cs.filter(v => v !== val); el.classList.remove('selected'); cb.checked = false; }
+      else { if (q.max && cs.length >= q.max) return; answers[q.id] = [...cs, val]; el.classList.add('selected'); cb.checked = true; }
+    }));
+  }
+}
+
+function saveAnswer() {
+  const q = visibleQs[cur], inp = document.getElementById('q-input');
+  if (inp) answers[q.id] = inp.value.trim();
+}
+function nextQ() { saveAnswer(); buildVisible(); cur + 1 >= visibleQs.length ? submitForm() : renderQ(cur + 1); }
+function prevQ() { saveAnswer(); if (cur > 0) renderQ(cur - 1); }
+function skipQ() { delete answers[visibleQs[cur].id]; buildVisible(); cur + 1 >= visibleQs.length ? submitForm() : renderQ(cur + 1); }
+
+async function submitForm() {
+  document.getElementById('progress').style.width = '100%';
+  document.getElementById('questions-wrap').innerHTML = '';
+  showScreen('done');
+
+  const fields = {};
+  Object.entries(answers).forEach(([k, v]) => {
+    if (fieldMap[k] && v && v !== '') fields[fieldMap[k]] = Array.isArray(v) ? v.join(', ') : v;
+  });
+
+  try {
+    const res = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      document.getElementById('done-title').textContent = 'Response saved!';
+      document.getElementById('done-msg').innerHTML = 'We\'ll follow up within 2 weeks.<br><em>In solidarity, The Self-Directed IRA Study Group</em>';
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch (err) {
+    document.getElementById('done-title').textContent = 'Submission error';
+    document.getElementById('done-msg').textContent = 'Something went wrong — please copy your answers below as a backup.';
+    document.getElementById('fallback-area').style.display = 'block';
+    const pretty = {};
+    Object.entries(answers).forEach(([k, v]) => { if (v && v !== '') pretty[fieldMap[k] || k] = v; });
+    document.getElementById('fallback-json').textContent = JSON.stringify(pretty, null, 2);
+  }
+}
+
+function copyFallback() {
+  navigator.clipboard.writeText(document.getElementById('fallback-json').textContent).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to clipboard', 2000);
+  });
+}
+</script>
+</body>
+</html>
