@@ -229,24 +229,16 @@ async function submitForm() {
       document.getElementById('done-title').textContent = 'Response saved!';
       document.getElementById('done-msg').innerHTML = 'We\'ll follow up within 2 weeks.<br><em>In solidarity, The Self-Directed IRA Study Group</em>';
     } else {
-      throw new Error(data.error || 'Unknown error');
+      throw new Error(JSON.stringify(data));
     }
   } catch (err) {
     document.getElementById('done-title').textContent = 'Submission error';
-    document.getElementById('done-msg').textContent = 'Something went wrong — please copy your answers below as a backup.';
+    document.getElementById('done-msg').textContent = err.message;
     document.getElementById('fallback-area').style.display = 'block';
     const pretty = {};
     Object.entries(answers).forEach(([k, v]) => { if (v && v !== '') pretty[fieldMap[k] || k] = v; });
     document.getElementById('fallback-json').textContent = JSON.stringify(pretty, null, 2);
   }
-}
-
-function copyFallback() {
-  navigator.clipboard.writeText(document.getElementById('fallback-json').textContent).then(() => {
-    const btn = document.querySelector('.btn-copy');
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy to clipboard', 2000);
-  });
 }
 </script>
 </body>
